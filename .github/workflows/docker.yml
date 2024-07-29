@@ -2,7 +2,7 @@ name: Build and Test Docker Image
 
 on:
     workflow_run:
-      workflows: ["Lint"]
+      workflows: ["Linters"]
       types:
         - completed
 
