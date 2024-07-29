@@ -1,0 +1,82 @@
+[tool.ruff.lint]
+select = [
+    "E", # PEP8 errors
+    "W", # PEP8 warnings
+    "C", # PEP8 code style
+    "F", # PyFlakes
+    "I", # Import formating
+    "N", # Pylint
+    "D", # Docstrings
+    "UP", # pyupgrade - improves python code performance
+    "YTT", # YAPF - code formatting
+    "ANN", # flake8 annotations
+    "ASYNC", # flake8-async
+    "ASYNC1", # flake8-trio
+    "S", # flake8 bandit - security vulnerability checks,
+    "FBT", # Boolean trap checks
+    "B", # bugbear - detect common bugs
+    "A", # Don't overwrite builtin python variables
+    "COM", # Trailing commas
+    "C4", # python list/dict comprehension checks
+    "DTZ", # Datetime timezone checks
+    "T10", # debugger checks
+    "EXE", # flake8 executable
+    "ISC", # implicit string concatenation
+    "ICN", # import conventions
+    "PIE", # flake8 pie. Unnecessary statements
+    "PYI", # flake8-pyi - type hints
+#    "PT", # pytest style tests - enable if we switch to pytest
+    "Q", # flake8-quotes - check quotes
+    "RSE", # unnesessary parens
+    "RET", # return checking
+    "SLF", # private member access
+    "SIM", # flake8 simplify code
+    "TID", # flake8-tidy-imports
+    "TCH", # flake8 type checking
+    "INT", # flake8-gettext
+    "ARG", # unused args
+    "PTH", # use pathlib
+    "PLE", # pylint errors
+    "PLC", # pylint conventions
+    "PLW", # pylint warnings
+    "TRY", # try except checks
+    "FLY", # string.join alternatives
+    "PERF", # performance checks
+    "LOG", # logging checks
+    "RUF", # ruffus checks
+]
+ignore = [
+    "E501", # line too long
+    "C901", # too complex
+    "D1",   # missing docstring
+    "D205", # 1 blank line required between summary line and description
+    "D203", # 1 blank line required before class docstring
+    "D212", # Multi-line docstring summary should start at the second line
+    "D401", # First line should be in imperative mood; try rephrasing
+    "D400", # First line should end with a period
+    "D415", # First line should end with a punctuation
+    "D417", # missing arg from description
+    "UP015", # Unnecessary open mode parmeters
+    "ANN101", # (deprecated) missing self annotations
+    "ANN102", # (deprecated) missing self annotations
+    "S603", # subprocess - check for untrusted input
+    "S110", # log try except errors
+    "S605", # Shell started, possible injection detected
+    "S113", # Using requests call without timeout
+    "BLE", # Don't allow blind exceptions
+    "B017", # block assertRaises(Exception)
+    "EM", # Error message formatting
+    "FA", # flake8 future annotations checks (only useful for pyton 3.9 and below)
+    "INP", # implicit namespace package
+    "T20", # print statements
+    "PLR0915", "PLR0912", # too many statements/branches
+    "TRY003", # long exception messages
+    "TRY401", # reduendant exception object
+    "TRY301", # abstract raise
+    "COM812", # trailing commas
+    "ISC001", # implicit string concatenation.
+    "S101", # block assert
+]
+
+[tool.ruff]
+line-length = 120
