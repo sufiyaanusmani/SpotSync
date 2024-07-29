@@ -28,27 +28,27 @@ jobs:
           ${{ runner.os }}-buildx-
 
     - name: Build Docker image
-      run: docker build -t myapp:latest .
+      run: docker build -t spotsync:latest .
 
     - name: Run Docker container
       run: |
-        docker run --name myapp -d myapp:latest
+        docker run --name spotsync -d spotsync:latest
         sleep 10
       continue-on-error: true
 
     - name: Check if container is running
       run: |
-        if [ $(docker ps -q -f name=myapp) ]; then
+        if [ $(docker ps -q -f name=spotsync) ]; then
           echo "Container is running."
         else
           echo "Container failed to run."
-          docker logs myapp
+          docker logs spotsync
           exit 1
         fi
 
     - name: Clean up
       if: always()
       run: |
-        docker stop myapp || true
-        docker rm myapp || true
-        docker rmi myapp:latest || true
+        docker stop spotsync || true
+        docker rm spotsync || true
+        docker rmi spotsync:latest || true
