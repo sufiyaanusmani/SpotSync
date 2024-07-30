@@ -1,11 +1,18 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from api.core.config import engine
+from api.models.models import Base
 from api.v1.routes import routes
 
 # Create an instance of the FastAPI class
 app = FastAPI()
 app.include_router(routes.router, prefix="/api/v1")
+
+# Create tables
+@app.on_event("startup")
+def on_startup() -> None:
+    Base.metadata.create_all(bind=engine)
 
 # Define a route for the root URL ("/")
 @app.get("/")
@@ -22,4 +29,4 @@ async def custom_404_handler(request: Request, exc: Exception) -> JSONResponse: 
 # Run the application using 'uvicorn' if this script is run directly
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000) # uvicorn api.main:app --reload

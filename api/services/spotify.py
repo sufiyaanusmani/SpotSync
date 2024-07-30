@@ -26,6 +26,7 @@ def get_song_metadata(url: str) -> dict[str, Any]:
         thumbnail_url = album_images[0]["url"] if album_images else None
 
         return {
+            "id": track["id"],
             "name": track["name"],
             "artists": [artist["name"] for artist in track["artists"]],
             "album": track["album"]["name"],
