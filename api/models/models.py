@@ -15,4 +15,5 @@ class Song(Base):
     duration = Column(Integer)
     url = Column(String, unique=True, index=True)
     thumbnail_url = Column(String)
+    download_url = Column(String)
     status = Column(String, index=True, default=Status.PENDING)

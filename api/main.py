@@ -1,12 +1,18 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
+from api.constants.directory import MEDIA_DIR, SONG_DIR
 from api.core.config import engine
 from api.models.models import Base
 from api.v1.routes import routes
 
 # Create an instance of the FastAPI class
 app = FastAPI()
+
+# Serve static files from the "media" directory
+app.mount("/media", StaticFiles(directory=MEDIA_DIR), name="media")
+
 app.include_router(routes.router, prefix="/api/v1")
 
 # Create tables
@@ -18,6 +24,15 @@ def on_startup() -> None:
 @app.get("/")
 def read_root() -> dict[str, str]:
     return {"message": "Hello World"}
+
+@app.get("/media/songs/{song_id}.mp3")
+async def get_song(song_id: str) -> FileResponse:
+    file_path = SONG_DIR / f"{song_id}.mp3"
+
+    if not file_path.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(file_path)
 
 @app.exception_handler(404)
 async def custom_404_handler(request: Request, exc: Exception) -> JSONResponse:  # noqa: ARG001

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
@@ -19,16 +19,16 @@ class SongRequest(BaseModel):
 async def root() -> JSONResponse:
     return JSONResponse(content={"message": "/api/v1"})
 
-async def add_song(request: SongRequest) -> JSONResponse:
-    metadata = get_song_metadata(request.url)
+async def add_song(request: Request, song_request: SongRequest) -> JSONResponse:
+    metadata = get_song_metadata(song_request.url)
     if "error" in metadata:
         raise HTTPException(status_code=400, detail=metadata["error"])
 
     # Store metadata in SQLite database using SQLAlchemy
     db: Session = SessionLocal()
-    db_song = store_song_in_db(db, metadata)
+    db_song = store_song_in_db(db, metadata, request)
     db.close()
     return db_song
 
-async def get_song(song_id: str) -> JSONResponse:
+async def get_song_info(song_id: str) -> JSONResponse:
     return JSONResponse(content={"song_id": song_id})
