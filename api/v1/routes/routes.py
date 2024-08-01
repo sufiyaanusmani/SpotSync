@@ -1,14 +1,16 @@
 from fastapi import APIRouter
 
-from api.v1.controllers.songs import add_song, get_song_info, root
+import api.v1.controllers.songs as SongController  # noqa: N812
 
 router = APIRouter()
 
 # /api/v1 -> GET
-router.get("/")(root)
+router.get("/")(SongController.root)
 
 # /api/v1/song/{song_id} -> GET
-router.get("/song/{song_id}")(get_song_info)
+router.get("/song/{song_id}")(SongController.get_song_info)
 
 # /api/v1/add -> POST
-router.post("/add")(add_song)
+router.post("/add")(SongController.add_song)
+
+router.put("/song/{song_id}/status")(SongController.update_status)

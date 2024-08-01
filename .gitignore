@@ -164,3 +164,4 @@ cython_debug/
 # Jenkins Server
 jenkins_server/
 *.db
+media/

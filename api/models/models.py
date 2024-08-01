@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
 from api.constants.songs import Status
@@ -15,5 +15,5 @@ class Song(Base):
     duration = Column(Integer)
     url = Column(String, unique=True, index=True)
     thumbnail_url = Column(String)
-    download_url = Column(String)
-    status = Column(String, index=True, default=Status.PENDING)
+    status = Column(String, index=True, default=Status.NOT_STARTED)
+    next_check_time = Column(DateTime, index=True, nullable=True, default=None)
