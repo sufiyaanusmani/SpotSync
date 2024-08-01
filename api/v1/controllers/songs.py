@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from api.core.config import SessionLocal
+from api.models.models import Song
 from api.services.db import store_song_in_db, update_song_status
 from api.services.spotify import get_song_metadata
 
@@ -45,7 +46,11 @@ async def add_song(request: Request, song_request: SongRequest) -> JSONResponse:
     }
 
 async def get_song_info(song_id: str) -> JSONResponse:
-    return JSONResponse(content={"song_id": song_id})
+    db: Session = SessionLocal()
+    song = db.query(Song).filter(Song.id == song_id).first()
+    if song:
+        return song
+    return JSONResponse(status_code=404, content={"message": "Song not found"})
 
 
 async def update_status(song_id: str, status_request: UpdateStatusRequest) -> JSONResponse:
