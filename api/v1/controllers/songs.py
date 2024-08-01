@@ -59,3 +59,10 @@ async def update_status(song_id: str, status_request: UpdateStatusRequest) -> JS
     db.close()
 
     return JSONResponse(content=result)
+
+
+async def get_all_songs_info() -> JSONResponse:
+    db: Session = SessionLocal()
+    songs = db.query(Song).all()
+    db.close()
+    return songs
