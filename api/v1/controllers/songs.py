@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from api.core.config import SessionLocal
-from api.services.db import store_song_in_db
+from api.services.db import store_song_in_db, update_song_status
 from api.services.spotify import get_song_metadata
 
 if TYPE_CHECKING:
@@ -14,6 +14,9 @@ if TYPE_CHECKING:
 
 class SongRequest(BaseModel):
     url: str
+
+class UpdateStatusRequest(BaseModel):
+    status: str
 
 
 async def root() -> JSONResponse:
@@ -26,9 +29,28 @@ async def add_song(request: Request, song_request: SongRequest) -> JSONResponse:
 
     # Store metadata in SQLite database using SQLAlchemy
     db: Session = SessionLocal()
-    db_song = store_song_in_db(db, metadata, request)
+    db_song = store_song_in_db(db, metadata)
     db.close()
-    return db_song
+    return {
+        "id": db_song.id,
+        "name": db_song.name,
+        "artists": db_song.artists,
+        "album": db_song.album,
+        "release_date": db_song.release_date,
+        "duration": db_song.duration,
+        "url": db_song.url,
+        "thumbnail_url": db_song.thumbnail_url,
+        "status": db_song.status,
+        "download_url": str(request.url_for("get_song", song_id=db_song.id))
+    }
 
 async def get_song_info(song_id: str) -> JSONResponse:
     return JSONResponse(content={"song_id": song_id})
+
+
+async def update_status(song_id: str, status_request: UpdateStatusRequest) -> JSONResponse:
+    db: Session = SessionLocal()
+    result = update_song_status(db, song_id, status_request.status)
+    db.close()
+
+    return JSONResponse(content=result)

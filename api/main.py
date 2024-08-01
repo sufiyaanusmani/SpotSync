@@ -1,17 +1,24 @@
+from typing import TYPE_CHECKING
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi_utils.tasks import repeat_every
 
-from api.constants.directory import MEDIA_DIR, SONG_DIR
-from api.core.config import engine
+from api.constants.directory import Directory
+from api.core.config import SessionLocal, engine
 from api.models.models import Base
+from api.services.download import process_undownloaded_songs
 from api.v1.routes import routes
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
 
 # Create an instance of the FastAPI class
 app = FastAPI()
 
 # Serve static files from the "media" directory
-app.mount("/media", StaticFiles(directory=MEDIA_DIR), name="media")
+app.mount("/media", StaticFiles(directory=Directory.MEDIA_DIR), name="media")
 
 app.include_router(routes.router, prefix="/api/v1")
 
@@ -27,12 +34,19 @@ def read_root() -> dict[str, str]:
 
 @app.get("/media/songs/{song_id}.mp3")
 async def get_song(song_id: str) -> FileResponse:
-    file_path = SONG_DIR / f"{song_id}.mp3"
+    file_path = Directory.SONG_DIR / f"{song_id}.mp3"
 
     if not file_path.is_file():
         raise HTTPException(status_code=404, detail="File not found")
 
     return FileResponse(file_path)
+
+@app.on_event("startup")
+@repeat_every(seconds=20)  # Adjust the interval as needed
+def download_undownloaded_songs_task() -> None:
+    db: Session = SessionLocal()
+    process_undownloaded_songs(db)
+    db.close()
 
 @app.exception_handler(404)
 async def custom_404_handler(request: Request, exc: Exception) -> JSONResponse:  # noqa: ARG001
