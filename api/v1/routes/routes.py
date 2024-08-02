@@ -10,6 +10,9 @@ router.get("/")(SongController.root)
 # /api/v1/songs -> GET
 router.get("/songs")(SongController.get_all_songs_info)
 
+# /api/v1/songs/add -> POST
+router.post("/songs/add")(SongController.add_songs)
+
 # /api/v1/song/add -> POST
 router.post("/song/add")(SongController.add_song)
 

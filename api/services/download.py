@@ -26,9 +26,8 @@ def download_song_with_spotdl(song_url: str) -> bool:
         try:
             subprocess.run(command, check=True, timeout=DOWNLOAD_TIMEOUT_SEC)
         except subprocess.CalledProcessError as e:  # noqa: PERF203
-            print(f"Error downloading song {song_url}: {e.stderr.decode()}")
+            print(f"Error downloading song {song_url}")
             print(f"Retrying... (attempt {attempt + 1}/{retries})")
-            return False
         except Exception as e:
             print(f"An error occurred while downloading {song_url}: {e}")
             time.sleep(DOWNLOAD_RETRY_INTERVAL_SEC)
