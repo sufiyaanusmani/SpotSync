@@ -73,20 +73,19 @@ async def get_all_songs_info(request: Request) -> JSONResponse:
     songs = []
     db: Session = SessionLocal()
     db_songs = db.query(Song).all()
-    for song in db_songs:
-        songs.append({
-            "id": song.id,
-            "name": song.name,
-            "artists": song.artists,
-            "album": song.album,
-            "release_date": song.release_date,
-            "duration": song.duration,
-            "url": song.url,
-            "thumbnail_url": song.thumbnail_url,
-            "status": song.status,
-            "download_url": str(request.url_for("get_song", song_id=song.id)),
-            "next_check_time": song.next_check_time
-        })
+    songs = [{
+        "id": song.id,
+        "name": song.name,
+        "artists": song.artists,
+        "album": song.album,
+        "release_date": song.release_date,
+        "duration": song.duration,
+        "url": song.url,
+        "thumbnail_url": song.thumbnail_url,
+        "status": song.status,
+        "download_url": str(request.url_for("get_song", song_id=song.id)),
+        "next_check_time": song.next_check_time
+    } for song in db_songs]
     db.close()
     return songs
 
@@ -99,7 +98,7 @@ async def add_songs(request: Request, song_request: SongsRequest) -> JSONRespons
         if "error" in metadata:
             print(f"Error fetching metadata for URL {song_url}: {metadata['error']}")
             continue
-    
+
         # Store metadata in SQLite database using SQLAlchemy
         try:
             db_song = store_song_in_db(db, metadata)
@@ -120,6 +119,6 @@ async def add_songs(request: Request, song_request: SongsRequest) -> JSONRespons
         except Exception as e:
             print(f"Error storing song metadata for URL {song_url}: {e}")
             continue
-    
+
     db.close()
     return response_data
